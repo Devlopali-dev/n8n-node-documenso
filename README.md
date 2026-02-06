@@ -1,162 +1,173 @@
 # n8n-nodes-documenso
 
-This is an [n8n](https://n8n.io/) community node for [Documenso](https://documenso.com) — the open source document signing platform.
+[n8n](https://n8n.io/) community node for [Documenso](https://documenso.com) — the open source document signing platform.
 
-It lets you automate document signing workflows directly from n8n using the Documenso API v2.
+Automate document signing workflows directly from n8n using the Documenso API v2.
 
 ## Prerequisites
 
-You need a Documenso API key to use this node.
+You need a Documenso API key.
 
-1. Log in to your Documenso account at [app.documenso.com](https://app.documenso.com) (or your self-hosted instance)
-2. Go to **Settings** -> **API Tokens**
-3. Click **Create Token** and copy the generated API key (starts with `api_`)
+1. Log in at [app.documenso.com](https://app.documenso.com) (or your self-hosted instance)
+2. Go to **Settings** → **API Tokens**
+3. Click **Create Token** and copy the key
 
 ## Installation
 
-In your n8n instance, go to **Settings** -> **Community Nodes** and install:
+In your n8n instance, go to **Settings** → **Community Nodes** and install:
 
 ```
 @documenso/n8n-nodes-documenso
 ```
 
-Or install via npm:
-
-```bash
-npm install @documenso/n8n-nodes-documenso
-```
-
 ## Credentials
-
-When setting up the Documenso credential in n8n:
 
 | Field | Description |
 |-------|-------------|
 | **API Key** | Your Documenso API token |
-| **Base URL** | `https://app.documenso.com/api/v2` (default). Change this for self-hosted instances. |
+| **Base URL** | `https://app.documenso.com/api/v2` (default). Change for self-hosted instances. |
 
-## Supported Operations
+## Nodes
 
-### Document
+### Documenso
 
-Create, manage, and send documents for signing.
+The main node with 7 resources and 35 operations.
+
+#### Document
 
 | Operation | Description |
 |-----------|-------------|
-| Create | Upload a PDF and create a new document |
-| Delete | Delete a document |
-| Distribute | Send a document to recipients for signing |
-| Duplicate | Duplicate a document |
 | Find | Search for documents |
 | Get | Get a document by ID |
-| Redistribute | Resend a document to specific recipients |
+| Create | Upload a PDF and create a new document |
+| Create and Send | Upload a PDF, add recipients and fields, and send for signing — all in one step |
 | Update | Update document metadata |
+| Delete | Delete a document |
+| Duplicate | Duplicate a document |
+| Download | Download the signed PDF |
+| Send | Send a document to recipients for signing |
+| Resend | Resend to specific recipients |
 
-### Template
-
-Create and manage reusable signing templates.
+#### Template
 
 | Operation | Description |
 |-----------|-------------|
-| Create | Upload a PDF and create a new template |
-| Delete | Delete a template |
-| Duplicate | Duplicate a template |
 | Find | Search for templates |
 | Get | Get a template by ID |
+| Create | Upload a PDF and create a new template |
 | Update | Update template metadata |
-| Use | Create a document from a template |
+| Delete | Delete a template |
+| Duplicate | Duplicate a template |
+| Use | Create a document from a template, optionally sending it immediately |
 
-### Recipient
-
-Manage signers and other recipients on documents/templates.
+#### Recipient
 
 | Operation | Description |
 |-----------|-------------|
-| Create Many | Add multiple recipients |
-| Delete | Remove a recipient |
+| Create | Add recipients to a document or template |
 | Get | Get a recipient by ID |
-| Update Many | Update multiple recipients |
+| Update | Update recipients |
+| Delete | Remove a recipient |
 
-### Field
-
-Manage signature fields, text fields, and other form fields.
+#### Field
 
 | Operation | Description |
 |-----------|-------------|
-| Create Many | Add multiple fields |
-| Delete | Remove a field |
+| Create | Add fields using placeholder text matching (`{{signature}}`), coordinates, or JSON |
 | Get | Get a field by ID |
-| Update Many | Update multiple fields |
+| Update | Update fields |
+| Delete | Remove a field |
 
-### Item
-
-Manage document files (PDFs) within envelopes.
-
-| Operation | Description |
-|-----------|-------------|
-| Create Many | Upload files as envelope items |
-| Delete | Remove an item |
-| Download | Download an item file |
-| Update Many | Update item metadata |
-
-### Attachment
-
-Manage link attachments on documents/templates.
+#### File
 
 | Operation | Description |
 |-----------|-------------|
-| Create | Add an attachment |
-| Delete | Remove an attachment |
-| Find | List all attachments |
+| Upload | Upload files to a document or template |
+| Download | Download a file |
+| Update | Update file metadata |
+| Delete | Remove a file |
+
+#### Attachment
+
+| Operation | Description |
+|-----------|-------------|
+| Find | List attachments on a document or template |
+| Create | Add a URL attachment |
 | Update | Update an attachment |
+| Delete | Remove an attachment |
 
-### Folder
-
-Organize documents and templates into folders.
+#### Folder
 
 | Operation | Description |
 |-----------|-------------|
-| Create | Create a folder |
-| Delete | Delete a folder |
 | Find | Search for folders |
+| Create | Create a folder |
 | Update | Update a folder |
+| Delete | Delete a folder |
 
-### Embedding
+### Documenso Trigger
 
-Manage presign tokens for embedded signing.
+Webhook-based trigger node that starts a workflow when a Documenso event occurs.
 
-| Operation | Description |
-|-----------|-------------|
-| Create Presign Token | Generate an embedding presign token |
-| Verify Presign Token | Verify an embedding presign token |
+| Event | Description |
+|-------|-------------|
+| Document Created | A new document was created |
+| Document Sent | A document was sent to recipients |
+| Document Opened | A recipient opened the document |
+| Document Signed | A recipient signed the document |
+| Document Completed | All recipients have signed |
+| Document Rejected | A recipient rejected the document |
+| Document Cancelled | The sender cancelled the document |
 
-## Example Workflow
+Webhooks must be configured manually in Documenso (Team Settings → Webhooks). Optional secret verification via the `X-Documenso-Secret` header.
 
-A typical document signing workflow in n8n:
+## Example Workflows
 
-1. **Documenso** (Document: Create) - Upload a PDF
-2. **Documenso** (Recipient: Create Many) - Add signers
-3. **Documenso** (Field: Create Many) - Add signature fields
-4. **Documenso** (Document: Distribute) - Send for signing
+**Send a document for signing (one node):**
 
-For templates:
+1. **Documenso** (Document: Create and Send) — upload PDF, add recipients with signing fields, sends immediately
 
-1. **Documenso** (Template: Use) - Create document from template with recipient overrides
-2. The template's pre-configured fields and recipients are applied automatically
+**Send a document step-by-step:**
 
-## Self-Hosted Documenso
+1. **Documenso** (Document: Create) — upload a PDF
+2. **Documenso** (Recipient: Create) — add signers
+3. **Documenso** (Field: Create) — add signature fields via placeholder text matching
+4. **Documenso** (Document: Send) — send for signing
 
-If you're running a self-hosted Documenso instance, change the **Base URL** in the credentials to point to your instance:
+**Use a template:**
+
+1. **Documenso** (Template: Use) — create document from template with recipient overrides, optionally send immediately
+
+**React to signing events:**
+
+1. **Documenso Trigger** (Document Completed) — triggers when all recipients have signed
+2. **Documenso** (Document: Download) — download the signed PDF
+
+## Self-Hosted
+
+Change the **Base URL** in credentials to your instance:
 
 ```
-https://your-documenso-domain.com/api/v2
+https://your-domain.com/api/v2
 ```
+
+## Development
+
+```bash
+bun install          # install dependencies
+bun run build        # build with tsdown
+bun run typecheck    # type-check
+bun run check        # lint + format (biome)
+bun run dev          # run n8n locally with docker compose
+```
+
+After changes: `bun run build && docker compose restart`
 
 ## Resources
 
 - [Documenso API Documentation](https://docs.documenso.com/developers/public-api)
-- [Documenso Website](https://documenso.com)
-- [n8n Community Nodes Documentation](https://docs.n8n.io/integrations/community-nodes/)
+- [Documenso](https://documenso.com)
+- [n8n Community Nodes](https://docs.n8n.io/integrations/community-nodes/)
 
 ## License
 
