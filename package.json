@@ -1,0 +1,52 @@
+{
+  "name": "@documenso/n8n-nodes-documenso",
+  "version": "0.1.0",
+  "description": "n8n community node for Documenso - the open source document signing platform",
+  "keywords": [
+    "n8n-community-node-package"
+  ],
+  "author": {
+    "name": "Documenso",
+    "email": "support@documenso.com",
+    "url": "https://documenso.com"
+  },
+  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsdown",
+    "dev": "docker compose up",
+    "check": "biome check --write",
+    "lint": "biome lint",
+    "format": "biome format --write",
+    "typecheck": "tsc --noEmit",
+    "release": "./scripts/release.sh"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/DocumensoApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Documenso/Documenso.node.js",
+      "dist/nodes/DocumensoTrigger/DocumensoTrigger.node.js"
+    ]
+  },
+  "dependencies": {
+    "@documenso/sdk-typescript": "^0.7.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.14",
+    "@n8n/node-cli": "^0.19.0",
+    "@types/bun": "latest",
+    "n8n-workflow": "^2.7.0",
+    "tsdown": "^0.20.3",
+    "typescript": "^5.7.0"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
+}

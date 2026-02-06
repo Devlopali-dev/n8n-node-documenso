@@ -1,0 +1,19 @@
+{
+  "node": "n8n-nodes-base.documenso",
+  "nodeVersion": "1.0",
+  "codexVersion": "1.0",
+  "categories": ["Productivity"],
+  "resources": {
+    "primaryDocumentation": [
+      {
+        "url": "https://docs.documenso.com/developers/public-api"
+      }
+    ],
+    "credentialDocumentation": [
+      {
+        "url": "https://docs.documenso.com/developers/public-api/authentication"
+      }
+    ]
+  },
+  "alias": ["document", "signing", "esignature", "pdf", "documenso", "envelope"]
+}
