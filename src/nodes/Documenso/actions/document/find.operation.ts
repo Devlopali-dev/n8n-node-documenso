@@ -135,8 +135,11 @@ export async function execute(
           page,
           perPage: 100,
         });
-        allResults.push(...response.data);
-        hasMore = response.currentPage < response.totalPages;
+        allResults.push(...(response.data ?? []));
+        hasMore =
+          typeof response.currentPage === "number" &&
+          typeof response.totalPages === "number" &&
+          response.currentPage < response.totalPages;
         page++;
       }
 

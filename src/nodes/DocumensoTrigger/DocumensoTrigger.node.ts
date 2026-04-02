@@ -118,7 +118,7 @@ export class DocumensoTrigger implements INodeType {
 
   async webhook(this: IWebhookFunctions): Promise<IWebhookResponseData> {
     const req = this.getRequestObject();
-    
+
     const body = this.getBodyData() as {
       event?: string;
       payload?: Record<string, any>;
@@ -132,10 +132,10 @@ export class DocumensoTrigger implements INodeType {
     if (webhookSecret) {
       const incomingSecret = req.headers["x-documenso-secret"] as string;
 
-      if (incomingSecret !== webhookSecret) {
-        return {
-          noWebhookResponse: true,
-        };
+      if (!incomingSecret || incomingSecret !== webhookSecret) {
+        const res = this.getResponseObject();
+        res.status(403).send("Forbidden");
+        return { noWebhookResponse: true };
       }
     }
 

@@ -1,8 +1,11 @@
 import type { IExecuteFunctions, INodeProperties } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
 import {
   getDocumensoClient,
   handleDocumensoError,
 } from "../../GenericFunctions";
+
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
 
 export const description: INodeProperties[] = [
   {
@@ -103,8 +106,18 @@ export async function execute(
       itemIndex,
       binaryPropertyName,
     );
-    
-    const blob = new Blob([buffer]);
+
+    if (buffer.length > MAX_FILE_SIZE) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `File size (${Math.round(buffer.length / 1024 / 1024)} MB) exceeds the maximum allowed size of 50 MB`,
+        { itemIndex },
+      );
+    }
+
+    const blob = new Blob([buffer], {
+      type: binaryData.mimeType || "application/pdf",
+    });
 
     const payload: {
       title: string;

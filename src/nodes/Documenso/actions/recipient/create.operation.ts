@@ -84,7 +84,7 @@ export async function execute(
   itemIndex: number,
 ): Promise<any> {
   const documentId = this.getNodeParameter("documentId", itemIndex) as string;
-  
+
   const recipientsData = this.getNodeParameter("recipients", itemIndex, {}) as {
     recipient?: Array<{
       email: string;
@@ -93,7 +93,7 @@ export async function execute(
       signingOrder?: number;
     }>;
   };
-  
+
   const recipients = (recipientsData.recipient || []).map((r) => ({
     ...r,
     email: r.email as "" | string,

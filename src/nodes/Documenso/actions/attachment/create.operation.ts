@@ -1,8 +1,50 @@
 import type { IExecuteFunctions, INodeProperties } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
 import {
   getDocumensoClient,
   handleDocumensoError,
 } from "../../GenericFunctions";
+
+const ALLOWED_ATTACHMENT_SCHEMES = ["https:", "http:"];
+
+function validateAttachmentUrl(url: string, context: IExecuteFunctions): void {
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new NodeOperationError(context.getNode(), "Invalid URL format for attachment");
+  }
+  if (!ALLOWED_ATTACHMENT_SCHEMES.includes(parsed.protocol)) {
+    throw new NodeOperationError(
+      context.getNode(),
+      "Attachment URL must use http or https scheme",
+    );
+  }
+  // Block private/loopback addresses to prevent SSRF
+  const hostname = parsed.hostname.toLowerCase();
+  if (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname === "::1" ||
+    hostname.startsWith("192.168.") ||
+    hostname.startsWith("10.") ||
+    hostname.startsWith("172.16.") ||
+    hostname.startsWith("172.17.") ||
+    hostname.startsWith("172.18.") ||
+    hostname.startsWith("172.19.") ||
+    hostname.startsWith("172.2") ||
+    hostname.startsWith("172.30.") ||
+    hostname.startsWith("172.31.") ||
+    hostname === "0.0.0.0" ||
+    hostname.endsWith(".local") ||
+    hostname.endsWith(".internal")
+  ) {
+    throw new NodeOperationError(
+      context.getNode(),
+      "Attachment URL must not point to a private or loopback address",
+    );
+  }
+}
 
 export const description: INodeProperties[] = [
   {
@@ -56,6 +98,8 @@ export async function execute(
   const documentId = this.getNodeParameter("documentId", itemIndex) as string;
   const label = this.getNodeParameter("label", itemIndex) as string;
   const data = this.getNodeParameter("data", itemIndex) as string;
+
+  validateAttachmentUrl(data, this);
 
   try {
     const client = await getDocumensoClient(this);

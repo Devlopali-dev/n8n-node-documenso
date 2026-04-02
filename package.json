@@ -15,11 +15,11 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsdown",
-    "dev": "docker compose up",
+    "typecheck": "tsc --noEmit",
     "check": "biome check --write",
+    "dev": "docker compose up",
     "lint": "biome lint",
     "format": "biome format --write",
-    "typecheck": "tsc --noEmit",
     "release": "./scripts/release.sh"
   },
   "files": [

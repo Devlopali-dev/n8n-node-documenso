@@ -1,4 +1,5 @@
 import type { IExecuteFunctions, INodeExecutionData } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
 import * as attachment from "./attachment";
 import * as document from "./document";
 import * as field from "./field";
@@ -33,18 +34,21 @@ export async function router(
   const executeFunction = resourceMap[resource]?.[operation];
 
   if (!executeFunction) {
-    throw new Error(`Unknown resource/operation: ${resource}/${operation}`);
+    throw new NodeOperationError(
+      this.getNode(),
+      `Unknown resource/operation: ${resource}/${operation}`,
+    );
   }
 
   for (let i = 0; i < items.length; i++) {
     try {
       const result = await executeFunction.call(this, i);
-      
+
       const executionData = this.helpers.constructExecutionMetaData(
         this.helpers.returnJsonArray(result),
         { itemData: { item: i } },
       );
-      
+
       returnData.push(...executionData);
     } catch (error) {
       if (this.continueOnFail()) {

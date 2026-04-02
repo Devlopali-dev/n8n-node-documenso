@@ -1,4 +1,5 @@
 import type { IExecuteFunctions, INodeProperties } from "n8n-workflow";
+import { NodeOperationError } from "n8n-workflow";
 import {
   getDocumensoClient,
   handleDocumensoError,
@@ -69,6 +70,15 @@ export async function execute(
     const client = await getDocumensoClient(this);
 
     const envelope = await client.envelopes.get({ envelopeId: documentId });
+
+    if (!envelope.envelopeItems?.length) {
+      throw new NodeOperationError(
+        this.getNode(),
+        `Document ${documentId} has no downloadable items`,
+        { itemIndex },
+      );
+    }
+
     const itemId = envelope.envelopeItems[0].id;
 
     const response = await client.envelopes.items.download({

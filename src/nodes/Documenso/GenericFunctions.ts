@@ -2,6 +2,9 @@ import { Documenso } from "@documenso/sdk-typescript";
 import type { IExecuteFunctions } from "n8n-workflow";
 import { NodeOperationError } from "n8n-workflow";
 
+const API_KEY_PATTERN = /^[a-zA-Z0-9_\-.]+$/;
+const ALLOWED_URL_SCHEMES = ["https:", "http:"];
+
 export async function getDocumensoClient(
   context: IExecuteFunctions,
 ): Promise<Documenso> {
@@ -14,10 +17,34 @@ export async function getDocumensoClient(
     );
   }
 
+  const apiKey = credentials.apiKey as string;
+  if (!API_KEY_PATTERN.test(apiKey)) {
+    throw new NodeOperationError(
+      context.getNode(),
+      "Invalid API key format in Documenso credentials",
+    );
+  }
+
+  const defaultUrl = "https://app.documenso.com/api/v2";
+  const rawBaseUrl = (credentials.baseUrl as string) || defaultUrl;
+
+  let serverURL: string;
+  try {
+    const parsed = new URL(rawBaseUrl);
+    if (!ALLOWED_URL_SCHEMES.includes(parsed.protocol)) {
+      throw new Error("Invalid scheme");
+    }
+    serverURL = parsed.toString();
+  } catch {
+    throw new NodeOperationError(
+      context.getNode(),
+      "Invalid base URL in Documenso credentials. Must be a valid http or https URL.",
+    );
+  }
+
   return new Documenso({
-    apiKey: credentials.apiKey as string,
-    serverURL:
-      (credentials.baseUrl as string) || "https://app.documenso.com/api/v2",
+    apiKey,
+    serverURL,
   });
 }
 

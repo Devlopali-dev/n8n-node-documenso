@@ -59,28 +59,31 @@ export async function execute(
   try {
     if (returnAll) {
       const allResults: any[] = [];
-      
+
       let page = 1;
       let hasMore = true;
-      
+
       while (hasMore) {
         const response = await client.folders.find({
           page,
           perPage: 100,
           ...(additionalFields.query ? { query: additionalFields.query } : {}),
         });
-        
-        allResults.push(...response.data);
-        
-        hasMore = response.currentPage < response.totalPages;
-        
+
+        allResults.push(...(response.data ?? []));
+
+        hasMore =
+          typeof response.currentPage === "number" &&
+          typeof response.totalPages === "number" &&
+          response.currentPage < response.totalPages;
+
         page++;
       }
 
       return allResults;
     } else {
       const limit = this.getNodeParameter("limit", itemIndex, 50) as number;
-      
+
       const response = await client.folders.find({
         page: 1,
         perPage: Math.min(limit, 100),

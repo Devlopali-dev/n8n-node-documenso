@@ -230,7 +230,6 @@ export async function execute(
       ...(f.width ? { width: f.width } : {}),
       ...(f.height ? { height: f.height } : {}),
     }));
-
   } else if (mode === "coordinates") {
     const data = this.getNodeParameter("coordinateFields", itemIndex, {}) as {
       field?: Array<{
@@ -242,7 +241,7 @@ export async function execute(
         height: number;
       }>;
     };
-    
+
     fields = (data.field || []).map((f) => ({
       recipientId: f.recipientId,
       page: f.page,

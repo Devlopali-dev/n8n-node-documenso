@@ -335,10 +335,7 @@ export async function execute(
 
     if (f.positioning === "placeholder") {
       fieldDef.placeholder = f.placeholder;
-
-      if (f.matchAll) {
-        fieldDef.matchAll = f.matchAll;
-      }
+      fieldDef.matchAll = f.matchAll === true;
     } else {
       fieldDef.page = f.page;
       fieldDef.positionX = f.positionX;
