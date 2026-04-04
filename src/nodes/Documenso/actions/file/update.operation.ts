@@ -41,18 +41,29 @@ export const description: INodeProperties[] = [
             description: "The ID of the file to update",
           },
           {
-            displayName: "Title",
-            name: "title",
-            type: "string",
-            default: "",
-            description: "New title for the file (leave empty to keep current)",
-          },
-          {
-            displayName: "Order",
-            name: "order",
-            type: "number",
-            default: 0,
-            description: "New display order (0 to keep current)",
+            displayName: "Fields to Update",
+            name: "updates",
+            type: "collection",
+            placeholder: "Add Property",
+            default: {},
+            description: "Only the properties you add here will be changed",
+            options: [
+              {
+                displayName: "Title",
+                name: "title",
+                type: "string",
+                default: "",
+                description: "New title for the file",
+              },
+              {
+                displayName: "Order",
+                name: "order",
+                type: "number",
+                default: 0,
+                typeOptions: { minValue: 0 },
+                description: "New display order",
+              },
+            ],
           },
         ],
       },
@@ -68,22 +79,22 @@ export async function execute(
   const filesData = this.getNodeParameter("files", itemIndex, {}) as {
     file?: Array<{
       fileId: string;
-      title?: string;
-      order?: number;
+      updates?: {
+        title?: string;
+        order?: number;
+      };
     }>;
   };
 
   const items = (filesData.file || []).map((f) => {
-    const update: Record<string, any> = {
-      envelopeItemId: f.fileId,
-    };
+    const update: Record<string, any> = { envelopeItemId: f.fileId };
+    const updates = f.updates ?? {};
 
-    if (f.title) {
-      update.title = f.title;
+    if (updates.title !== undefined) {
+      update.title = updates.title;
     }
-
-    if (f.order) {
-      update.order = f.order;
+    if (updates.order !== undefined) {
+      update.order = updates.order;
     }
 
     return update;

@@ -41,43 +41,54 @@ export const description: INodeProperties[] = [
             description: "The ID of the field to update",
           },
           {
-            displayName: "Page",
-            name: "page",
-            type: "number",
-            default: 0,
-            description: "New page number (0 to keep current)",
-          },
-          {
-            displayName: "X (%)",
-            name: "positionX",
-            type: "number",
-            default: 0,
-            description:
-              "New horizontal position as a percentage of page width (0 to keep current)",
-          },
-          {
-            displayName: "Y (%)",
-            name: "positionY",
-            type: "number",
-            default: 0,
-            description:
-              "New vertical position as a percentage of page height (0 to keep current)",
-          },
-          {
-            displayName: "Width (%)",
-            name: "width",
-            type: "number",
-            default: 0,
-            description:
-              "New width as a percentage of page width (0 to keep current)",
-          },
-          {
-            displayName: "Height (%)",
-            name: "height",
-            type: "number",
-            default: 0,
-            description:
-              "New height as a percentage of page height (0 to keep current)",
+            displayName: "Fields to Update",
+            name: "updates",
+            type: "collection",
+            placeholder: "Add Property",
+            default: {},
+            description: "Only the properties you add here will be changed",
+            options: [
+              {
+                displayName: "Page",
+                name: "page",
+                type: "number",
+                default: 1,
+                typeOptions: { minValue: 1 },
+                description: "New page number (starting from 1)",
+              },
+              {
+                displayName: "X (%)",
+                name: "positionX",
+                type: "number",
+                default: 0,
+                typeOptions: { minValue: 0, maxValue: 100 },
+                description: "New horizontal position as a percentage of page width (0–100)",
+              },
+              {
+                displayName: "Y (%)",
+                name: "positionY",
+                type: "number",
+                default: 0,
+                typeOptions: { minValue: 0, maxValue: 100 },
+                description: "New vertical position as a percentage of page height (0–100)",
+              },
+              {
+                displayName: "Width (%)",
+                name: "width",
+                type: "number",
+                default: 15,
+                typeOptions: { minValue: 0, maxValue: 100 },
+                description: "New width as a percentage of page width (0–100)",
+              },
+              {
+                displayName: "Height (%)",
+                name: "height",
+                type: "number",
+                default: 5,
+                typeOptions: { minValue: 0, maxValue: 100 },
+                description: "New height as a percentage of page height (0–100)",
+              },
+            ],
           },
         ],
       },
@@ -93,35 +104,34 @@ export async function execute(
   const fieldsData = this.getNodeParameter("fields", itemIndex, {}) as {
     field?: Array<{
       id: number;
-      page?: number;
-      positionX?: number;
-      positionY?: number;
-      width?: number;
-      height?: number;
+      updates?: {
+        page?: number;
+        positionX?: number;
+        positionY?: number;
+        width?: number;
+        height?: number;
+      };
     }>;
   };
 
   const fields = (fieldsData.field || []).map((f) => {
     const update: Record<string, any> = { id: f.id };
+    const updates = f.updates ?? {};
 
-    if (f.page) {
-      update.page = f.page;
+    if (updates.page !== undefined) {
+      update.page = updates.page;
     }
-
-    if (f.positionX) {
-      update.positionX = f.positionX;
+    if (updates.positionX !== undefined) {
+      update.positionX = updates.positionX;
     }
-
-    if (f.positionY) {
-      update.positionY = f.positionY;
+    if (updates.positionY !== undefined) {
+      update.positionY = updates.positionY;
     }
-
-    if (f.width) {
-      update.width = f.width;
+    if (updates.width !== undefined) {
+      update.width = updates.width;
     }
-
-    if (f.height) {
-      update.height = f.height;
+    if (updates.height !== undefined) {
+      update.height = updates.height;
     }
 
     return update;
