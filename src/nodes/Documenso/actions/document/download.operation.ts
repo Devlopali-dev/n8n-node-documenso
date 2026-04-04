@@ -3,6 +3,7 @@ import { NodeOperationError } from "n8n-workflow";
 import {
   getDocumensoClient,
   handleDocumensoError,
+  sanitizeFilename,
 } from "../../GenericFunctions";
 
 export const description: INodeProperties[] = [
@@ -83,7 +84,7 @@ export async function execute(
 
     const response = await client.envelopes.items.download({
       envelopeItemId: itemId,
-      version: version as any,
+      version: version as "signed" | "original",
     });
 
     let buffer: Buffer;
@@ -110,7 +111,8 @@ export async function execute(
     const contentType = headers?.["content-type"] ?? "application/pdf";
     const contentDisposition = headers?.["content-disposition"] ?? "";
     const fileNameMatch = contentDisposition.match(/filename="?([^";\n]+)"?/);
-    const fileName = fileNameMatch?.[1] ?? `document-${documentId}.pdf`;
+    const rawFileName = fileNameMatch?.[1] ?? "";
+    const fileName = sanitizeFilename(rawFileName, `document-${documentId}.pdf`);
 
     const binaryData = await this.helpers.prepareBinaryData(
       buffer,

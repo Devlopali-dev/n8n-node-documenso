@@ -48,6 +48,18 @@ export async function getDocumensoClient(
   });
 }
 
+/**
+ * Sanitize a filename extracted from a Content-Disposition header.
+ * Strips path separators and control characters to prevent path traversal.
+ */
+export function sanitizeFilename(raw: string, fallback: string): string {
+  // Take only the basename (strip any path component)
+  const base = raw.replace(/^.*[/\\]/, "");
+  // Remove null bytes and ASCII control characters
+  const clean = base.replace(/[\x00-\x1f\x7f]/g, "").trim();
+  return clean.length > 0 ? clean : fallback;
+}
+
 export function handleDocumensoError(
   context: IExecuteFunctions,
   error: unknown,
@@ -80,7 +92,17 @@ export function handleDocumensoError(
     });
   }
 
-  throw new NodeOperationError(context.getNode(), "An unknown error occurred", {
-    itemIndex,
-  });
+  let message = "An unknown error occurred";
+  if (error !== null && error !== undefined) {
+    try {
+      const serialized = JSON.stringify(error);
+      if (serialized !== "{}" && serialized !== "null") {
+        message = serialized;
+      }
+    } catch {
+      message = String(error);
+    }
+  }
+
+  throw new NodeOperationError(context.getNode(), message, { itemIndex });
 }

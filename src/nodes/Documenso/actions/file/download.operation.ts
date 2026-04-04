@@ -2,6 +2,7 @@ import type { IExecuteFunctions, INodeProperties } from "n8n-workflow";
 import {
   getDocumensoClient,
   handleDocumensoError,
+  sanitizeFilename,
 } from "../../GenericFunctions";
 
 export const description: INodeProperties[] = [
@@ -68,7 +69,7 @@ export async function execute(
 
     const response = await client.envelopes.items.download({
       envelopeItemId: fileId,
-      version: version as any,
+      version: version as "signed" | "original",
     });
 
     let buffer: Buffer;
@@ -94,7 +95,8 @@ export async function execute(
     const contentType = headers?.["content-type"] ?? "application/pdf";
     const contentDisposition = headers?.["content-disposition"] ?? "";
     const fileNameMatch = contentDisposition.match(/filename="?([^";\n]+)"?/);
-    const fileName = fileNameMatch?.[1] ?? `file-${fileId}.pdf`;
+    const rawFileName = fileNameMatch?.[1] ?? "";
+    const fileName = sanitizeFilename(rawFileName, `file-${fileId}.pdf`);
 
     const binaryData = await this.helpers.prepareBinaryData(
       buffer,
