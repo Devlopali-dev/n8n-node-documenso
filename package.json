@@ -14,7 +14,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsdown",
+    "clean": "rm -rf dist",
+    "build": "bun run clean && tsdown",
     "typecheck": "tsc --noEmit",
     "check": "biome check --write",
     "dev": "docker compose up",

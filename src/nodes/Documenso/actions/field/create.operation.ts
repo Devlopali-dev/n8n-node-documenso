@@ -152,6 +152,7 @@ export const description: INodeProperties[] = [
             type: "number",
             required: true,
             default: 0,
+            typeOptions: { minValue: 0, maxValue: 100 },
             description:
               "Horizontal position as a percentage of the page width (0–100)",
           },
@@ -161,6 +162,7 @@ export const description: INodeProperties[] = [
             type: "number",
             required: true,
             default: 0,
+            typeOptions: { minValue: 0, maxValue: 100 },
             description:
               "Vertical position as a percentage of the page height (0–100)",
           },
@@ -170,6 +172,7 @@ export const description: INodeProperties[] = [
             type: "number",
             required: true,
             default: 15,
+            typeOptions: { minValue: 0, maxValue: 100 },
             description: "Width as a percentage of the page width (0–100)",
           },
           {
@@ -178,6 +181,7 @@ export const description: INodeProperties[] = [
             type: "number",
             required: true,
             default: 5,
+            typeOptions: { minValue: 0, maxValue: 100 },
             description: "Height as a percentage of the page height (0–100)",
           },
         ],

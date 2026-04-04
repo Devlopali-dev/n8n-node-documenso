@@ -23,9 +23,5 @@ export default defineConfig({
       from: "src/nodes/Documenso/Documenso.node.json",
       to: "dist/nodes/Documenso",
     },
-    {
-      from: "src/nodes/Documenso/documenso.svg",
-      to: "dist/nodes/DocumensoTrigger",
-    },
   ],
 });

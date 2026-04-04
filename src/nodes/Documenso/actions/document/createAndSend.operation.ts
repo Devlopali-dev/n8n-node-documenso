@@ -186,6 +186,7 @@ export const description: INodeProperties[] = [
             name: "positionX",
             type: "number",
             default: 0,
+            typeOptions: { minValue: 0, maxValue: 100 },
             description:
               "Horizontal position as a percentage of page width (0–100)",
             displayOptions: {
@@ -197,6 +198,7 @@ export const description: INodeProperties[] = [
             name: "positionY",
             type: "number",
             default: 0,
+            typeOptions: { minValue: 0, maxValue: 100 },
             description:
               "Vertical position as a percentage of page height (0–100)",
             displayOptions: {
@@ -208,6 +210,7 @@ export const description: INodeProperties[] = [
             name: "width",
             type: "number",
             default: 15,
+            typeOptions: { minValue: 0, maxValue: 100 },
             description: "Width as a percentage of page width (0–100)",
             displayOptions: {
               show: { positioning: ["coordinates"] },
@@ -218,6 +221,7 @@ export const description: INodeProperties[] = [
             name: "height",
             type: "number",
             default: 5,
+            typeOptions: { minValue: 0, maxValue: 100 },
             description: "Height as a percentage of page height (0–100)",
             displayOptions: {
               show: { positioning: ["coordinates"] },

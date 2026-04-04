@@ -77,7 +77,7 @@ export const description: INodeProperties[] = [
   },
   {
     displayName: "URL",
-    name: "data",
+    name: "url",
     type: "string",
     required: true,
     default: "",
@@ -97,16 +97,16 @@ export async function execute(
 ): Promise<any> {
   const documentId = this.getNodeParameter("documentId", itemIndex) as string;
   const label = this.getNodeParameter("label", itemIndex) as string;
-  const data = this.getNodeParameter("data", itemIndex) as string;
+  const url = this.getNodeParameter("url", itemIndex) as string;
 
-  validateAttachmentUrl(data, this);
+  validateAttachmentUrl(url, this);
 
   try {
     const client = await getDocumensoClient(this);
 
     const response = await client.envelopes.attachments.create({
       envelopeId: documentId,
-      data: { label, data },
+      data: { label, data: url },
     });
 
     return response;
