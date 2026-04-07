@@ -62,7 +62,8 @@ export const description: INodeProperties[] = [
                 type: "number",
                 default: 0,
                 typeOptions: { minValue: 0, maxValue: 100 },
-                description: "New horizontal position as a percentage of page width (0–100)",
+                description:
+                  "New horizontal position as a percentage of page width (0–100)",
               },
               {
                 displayName: "Y (%)",
@@ -70,7 +71,8 @@ export const description: INodeProperties[] = [
                 type: "number",
                 default: 0,
                 typeOptions: { minValue: 0, maxValue: 100 },
-                description: "New vertical position as a percentage of page height (0–100)",
+                description:
+                  "New vertical position as a percentage of page height (0–100)",
               },
               {
                 displayName: "Width (%)",
@@ -86,7 +88,8 @@ export const description: INodeProperties[] = [
                 type: "number",
                 default: 5,
                 typeOptions: { minValue: 0, maxValue: 100 },
-                description: "New height as a percentage of page height (0–100)",
+                description:
+                  "New height as a percentage of page height (0–100)",
               },
             ],
           },

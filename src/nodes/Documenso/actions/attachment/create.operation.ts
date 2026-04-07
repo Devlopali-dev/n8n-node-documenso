@@ -12,7 +12,10 @@ function validateAttachmentUrl(url: string, context: IExecuteFunctions): void {
   try {
     parsed = new URL(url);
   } catch {
-    throw new NodeOperationError(context.getNode(), "Invalid URL format for attachment");
+    throw new NodeOperationError(
+      context.getNode(),
+      "Invalid URL format for attachment",
+    );
   }
   if (!ALLOWED_ATTACHMENT_SCHEMES.includes(parsed.protocol)) {
     throw new NodeOperationError(

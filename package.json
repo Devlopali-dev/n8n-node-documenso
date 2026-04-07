@@ -18,7 +18,7 @@
     "build": "bun run clean && tsdown",
     "typecheck": "tsc --noEmit",
     "check": "biome check --write",
-    "dev": "docker compose up",
+    "dev": "docker compose up --build",
     "lint": "biome lint",
     "format": "biome format --write",
     "release": "./scripts/release.sh"

@@ -112,7 +112,10 @@ export async function execute(
     const contentDisposition = headers?.["content-disposition"] ?? "";
     const fileNameMatch = contentDisposition.match(/filename="?([^";\n]+)"?/);
     const rawFileName = fileNameMatch?.[1] ?? "";
-    const fileName = sanitizeFilename(rawFileName, `document-${documentId}.pdf`);
+    const fileName = sanitizeFilename(
+      rawFileName,
+      `document-${documentId}.pdf`,
+    );
 
     const binaryData = await this.helpers.prepareBinaryData(
       buffer,
